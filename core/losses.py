@@ -16,16 +16,19 @@ class Loss: # _
     """ The generic class used to implement various loss subclasses
     (e.g., Mean Square Error, Binary Cross Entropy, etc.). """
 
+    # NOTE: __init_subclass__ cannot be used here as it executes upon
+    # each class' definition, not instantiation.
     def __init__(self, loss, loss_prime):
-        # Register internal callback methods on class initialization.
-        self.__loss = loss
-        self.__loss_prime = loss_prime
+        """ Registers internal callback methods on class initialization. """
+        
+        self._loss = loss
+        self._loss_prime = loss_prime
 
     def loss(self, y, y_hat):
-        return self.__loss(y, y_hat)
+        return self._loss(y, y_hat)
 
     def loss_prime(self,  y, y_hat):
-        return self.__loss_prime(y, y_hat)
+        return self._loss_prime(y, y_hat)
 
 
 
@@ -35,16 +38,16 @@ class Loss: # _
 class MSE(Loss):
     def __init__(self):
         # MSE(x) = mean( (y - y_hat)^2 )
-        def mse(y, y_hat):
+        def __f(y, y_hat):
             return np.mean(
                 np.power(y - y_hat, 2)
             )
 
         # MSE'(x) = -2 * (y - y_hat) / y[size]
-        def mse_prime(y, y_hat):
+        def __f_prime(y, y_hat):
             return -2 * (y - y_hat)/np.size(y)
 
-        super().__init__(mse, mse_prime)
+        super().__init__(__f, __f_prime)
 
 
 # Binary Cross Entropy
@@ -53,13 +56,13 @@ class MSE(Loss):
 class BCE(Loss):
     def __init__(self):
         # BCE(x) = TODO
-        def bce(y, y_hat):
+        def __f(y, y_hat):
             return np.mean(
                 -y*np.log(y_hat) - (1 - y)*np.log(1 - y_hat)
             )
 
         # BCE'(x) = TODO
-        def bce_prime(y, y_hat):
+        def __f_prime(y, y_hat):
             return ( (1 - y)/(1 - y_hat) - y/y_hat ) / np.size(y)
 
-        super().__init__(bce, bce_prime)
+        super().__init__(__f, __f_prime)

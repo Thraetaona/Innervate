@@ -33,21 +33,24 @@ class Activation:
     """ The generic class used to implement various activation functions 
     (e.g., Sigmoid, Tanh, Step, ReLU, Softmax, etc.) as subclasses. """
 
+    # NOTE: __init_subclass__ cannot be used here as it executes upon
+    # each class' definition, not instantiation.
     def __init__(self, activation, activation_prime):
-        # Register internal callback methods on class initialization.
-        self.__activation = activation
-        self.__activation_prime = activation_prime
+        """ Registers internal callback methods on class initialization. """
+        
+        self._activation = activation
+        self._activation_prime = activation_prime
 
     def forward(self, input):
         self._input = input
-        self._output = self.__activation(self._input) # TODO: Use locally?
+        self._output = self._activation(self._input) # TODO: Use locally?
         return self._output
 
     # NOTE: Gradient = Derivative (i.e., the instantanous rate of change)
     # TODO: Could take in the alpha (learning rate) here and optimize further.
     def backward(self, previous_output_gradient):
         return np.multiply(
-            previous_output_gradient, self.__activation_prime(self._input)
+            previous_output_gradient, self._activation_prime(self._input)
         )
         
 
@@ -61,7 +64,7 @@ class ReLU(Activation):
         #           x + |x|
         # ReLU(x) = ------.
         #             2
-        def relu(x):
+        def __f(x):
             return np.maximum(0, x)
 
         # NOTE: ReLU's derivative is 1 for positive and 0 for negative inputs.
@@ -69,12 +72,12 @@ class ReLU(Activation):
         # gets grouped with negative inputs to have a derivative of 0 at x=0:
         #     ReLU'(x) = { 1 | x >  0,
         #                { 0 | x <= 0.
-        def relu_prime(x):
+        def __f_prime(x):
             # Using an index mask, set non-positive values' gradients to 0.
-            results = x.copy(); results[relu(x) <= 0] = 0
+            results = x.copy(); results[__f(x) <= 0] = 0
             return results
 
-        super().__init__(relu, relu_prime)
+        super().__init__(__f, __f_prime)
 
 
 # TODO: List advantages
@@ -83,7 +86,7 @@ class Sigmoid(Activation):
         #                   1  
         # Sigmoid(x) = ------------.
         #               1 + e^(-x)
-        def sigmoid(x):
+        def __f(x):
             # Prevents overflow by conditionally using the appropriate
             # function format for negative values of x.
             return np.where(
@@ -93,11 +96,11 @@ class Sigmoid(Activation):
             )
 
         # Sigmoid'(x) = x * ( s(x) * (1 - s(x)) ).       
-        def sigmoid_prime(x):
-            s = sigmoid(x)
+        def __f_prime(x):
+            s = __f(x)
             return s * (1 - s)
 
-        super().__init__(sigmoid, sigmoid_prime)
+        super().__init__(__f, __f_prime)
 
 
 # The hyperbolic tangent ("Tanh") is a tangent (Tan) defined
@@ -113,11 +116,11 @@ class Tanh(Activation):
         #              x        3      1
         #                     ----  + ---
         #                       x   (...)
-        def tanh(x):
+        def __f(x):
             return np.tanh(x)
 
         # Tanh'(x) = x * (1 - Tanh(x)^2).
-        def tanh_prime(x):
+        def __f_prime(x):
             return 1 - np.tanh(x)**2
 
-        super().__init__(tanh, tanh_prime)
+        super().__init__(__f, __f_prime)
