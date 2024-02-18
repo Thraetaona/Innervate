@@ -29,3 +29,7 @@
       Writing the Library from scratch---using only Python and Numpy (for easier matrix algebra without having to use for-loops each time)---taught me what a neural network actually is and how exactly it gets trained.  The vast majority of machine learning courses and material on the Internet, of which there is no shortage, seemed to merely parrot the same Wikipedia-style description of algorithms and concepts used in machine learning; they all treated neural networks as some sort of blackbox where TensorFlow would magically convert our input to an output.  On the other hand, the lectures that did try to dive deeper into the topics seemed to explain them in impractical and overly abstract ways; they would spend hours describing how to take the derivative/gradient matrix of a function (e.g., Sigmoid, Mean Square Root, etc.) without ever explaining the goal, purpose, or motive of doing so.
 
       In the end, it was piecing together the knowledges gained from various open-sourced machine learning repositories, semi-obscure forum guides, and a few useful YouTube videos that came to my rescue.
+
+This project was actually a utility/tool of a larger project but, because the code itself appeared to be very modular, hierarchical, and object-oriented with a fair amount of documentation, I decided to publicize it for educational purposes.
+
+The larger project (which I will start working on very soon) is about hardware-accelerating a simple neural network on an FPGA chip, using the VHDL hardware-descriptive language;
