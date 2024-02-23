@@ -143,6 +143,20 @@ class Network(list):
             
             weights_file = f"{folder_path}/weights_{i+1}.{file_extension}"
             biases_file = f"{folder_path}/biases_{i+1}.{file_extension}"
-            
-            np.savetxt(weights_file, params["W"], delimiter=',', fmt=FORMAT)
-            np.savetxt(biases_file, params["B"], delimiter=',', fmt=FORMAT)
+
+            np.savetxt(weights_file, params["W"],
+                       delimiter=',', fmt=FORMAT)
+            # NOTE: The extra [] is to force numpy to flatten into rows.
+            np.savetxt(biases_file, [np.hstack(params["B"])],
+                       delimiter=',', fmt=FORMAT)
+
+            # Append (parentheses) to each line in the files to make them
+            # actual VHDL arrays.
+            #
+            # TODO: This was a quick workaround; find a better way to do this.
+            # Perhaps, use lambdas and a proper formatter.
+            for filename in [weights_file, biases_file]:
+                with open(filename, "r+") as f:
+                    lines = f.readlines()
+                    f.seek(0)  # Rewind to the beginning of the file
+                    f.writelines([f"({line.strip()})\n" for line in lines])
