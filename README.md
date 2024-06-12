@@ -32,4 +32,4 @@
 
 This project was actually a utility/tool of a larger project but, because the code itself appeared to be very modular, hierarchical, and object-oriented with a fair amount of documentation, I decided to publicize it for educational purposes.
 
-The larger project (which I will start working on very soon) is about hardware-accelerating a simple neural network on an FPGA chip, using the VHDL hardware-descriptive language;
+# The larger project is about hardware-accelerating a simple neural network on an FPGA chip, using the VHDL hardware-descriptive language; you may find its finished code (and live demo) here: https://github.com/Thraetaona/Innervator
